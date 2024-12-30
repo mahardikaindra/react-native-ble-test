@@ -52,6 +52,8 @@ class BleModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaMod
         val deviceMap = Arguments.createMap()
         deviceMap.putString("name", device.name)
         deviceMap.putString("address", device.address)
+        deviceMap.putInt("rssi", rssi)
+        deviceMap.putString("scanRecord", scanRecord.toString())
         sendEvent("BleDeviceFound", deviceMap)
     }
 

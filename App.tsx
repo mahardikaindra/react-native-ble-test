@@ -13,6 +13,7 @@ import {
   stopScan,
   subscribeToScanStarted,
   subscribeToScanStopped,
+  requestBluetoothPermission,
 } from './BleModule';
 
 type Device = {
@@ -62,7 +63,16 @@ const App = () => {
       <View style={styles.buttonContainer}>
         <Button
           title={isScanning ? 'Scanning...' : 'Start Scan'}
-          onPress={isScanning ? undefined : startScan}
+          onPress={async () => {
+            if (!isScanning) {
+              const granted = await requestBluetoothPermission();
+              if (granted) {
+                startScan();
+              } else {
+                console.log('Bluetooth permission denied');
+              }
+            }
+          }}
           disabled={isScanning}
         />
         <Button

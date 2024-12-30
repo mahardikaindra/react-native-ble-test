@@ -9,6 +9,7 @@
     <!-- Permissions for Android 12 and above -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:required="false"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:required="false"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" android:required="false"/>
 
     <application
         android:name=".MainApplication"

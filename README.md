@@ -1,79 +1,104 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# React Native BLE Module
 
-# Getting Started
+## Overview
+This module bridges native iOS and Android BLE APIs to the React Native layer, enabling seamless Bluetooth Low Energy (BLE) peripheral scanning and management. It supports TypeScript for React Native and utilizes Swift/Objective-C for iOS and Kotlin/Java for Android.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Features
+- Start and stop BLE scanning.
+- Retrieve details of discovered peripherals (ID, name, RSSI, advertisement data).
+- Notifications for scanning events (start and stop).
+- Object-oriented data management for easy access and manipulation.
 
-## Step 1: Start the Metro Server
+## Requirements
+### Development Environment
+- React Native: ^0.70
+- Node.js: ^16.0.0
+- TypeScript: ^4.5.0
+- Xcode: ^13.0 (for iOS development)
+- Android Studio: ^2021.1.1 (for Android development)
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
-
-To start Metro, run the following command from the _root_ of your React Native project:
-
-```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
+### Permissions
+#### iOS
+Add the following keys to your `Info.plist` file:
+```xml
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>We use Bluetooth to connect to nearby devices.</string>
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>We use Bluetooth to connect to nearby devices.</string>
 ```
 
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+#### Android
+Add the following permissions to your `AndroidManifest.xml` file:
+```xml
+<uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 ```
 
-### For iOS
+## Installation
+1. Clone this repository.
+2. Run the following command to install dependencies:
+   ```bash
+   npm install
+   ```
+3. Link the native module:
+   ```bash
+   npx react-native link
+   ```
+4. For iOS, install CocoaPods:
+   ```bash
+   cd ios && pod install
+   ```
 
-```bash
-# using npm
-npm run ios
+## Example Usage
+### Start Scanning
+```typescript
+import { NativeModules, NativeEventEmitter } from 'react-native';
 
-# OR using Yarn
-yarn ios
+const { BLEModule } = NativeModules;
+const bleEmitter = new NativeEventEmitter(BLEModule);
+
+BLEModule.startScan();
+
+bleEmitter.addListener('onDeviceFound', (device) => {
+  console.log('Discovered device:', device);
+});
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Stop Scanning
+```typescript
+BLEModule.stopScan();
+```
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+### Handle Notifications
+```typescript
+bleEmitter.addListener('onScanStart', () => {
+  console.log('Scan started.');
+});
 
-## Step 3: Modifying your App
+bleEmitter.addListener('onScanStop', () => {
+  console.log('Scan stopped.');
+});
+```
 
-Now that you have successfully run the app, let's modify it.
+## Development Notes
+- The module uses object-oriented programming to manage peripheral data efficiently.
+- Ensure that permissions are handled gracefully at runtime.
+- Test the module on physical devices for accurate BLE functionality.
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+## Integration
+To integrate the module into another React Native project:
+1. Copy the module folder to your project.
+2. Import and initialize the module in your codebase.
+3. Follow the usage examples provided.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+## Contributing
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Submit a pull request.
 
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## License
+This project is licensed under the MIT License. See the LICENSE file for details.

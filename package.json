@@ -1,9 +1,10 @@
 {
-  "name": "ReactNativeProject",
+  "name": "react-native-project",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android:clean": "cd android && ./gradlew clean",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",

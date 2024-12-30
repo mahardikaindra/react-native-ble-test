@@ -5,17 +5,26 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
+  Button,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
   View,
+  Platform,
 } from 'react-native';
+
+import {
+  startScan,
+  stopScan,
+  subscribeToScanStarted,
+  subscribeToScanStopped,
+} from './BleModule';
 
 import {
   Colors,
@@ -62,6 +71,26 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const onScanStarted = () => {
+        console.log('Scanning started');
+      };
+
+      const onScanStopped = (devices: any) => {
+        console.log('Scanning stopped', devices);
+      };
+
+      const scanStartedSubscription = subscribeToScanStarted(onScanStarted);
+      const scanStoppedSubscription = subscribeToScanStopped(onScanStopped);
+
+      return () => {
+        scanStartedSubscription();
+        scanStoppedSubscription();
+      };
+    }
+  }, []);
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -76,10 +105,17 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
+          {Platform.OS === 'ios' ? (
+            <Section title="Step One">
+              Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+              screen and then come back to see your edits.
+            </Section>
+          ) : (
+            <Section title="Step One">
+              <Button title="Start Scan" onPress={startScan} />
+              <Button title="Stop Scan" onPress={stopScan} />
+            </Section>
+          )}
           <Section title="See Your Changes">
             <ReloadInstructions />
           </Section>
